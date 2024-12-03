@@ -65,82 +65,19 @@ async function getPapers() {
 
 // 显示文献列表
 function displayPapers(papers) {
-  const paperList = document.getElementById('paperList');
   if (!papers || papers.length === 0) {
-    paperList.innerHTML = '<p>未找到论文信息</p>';
+    showError('未找到论文信息');
     return;
   }
+
+  // 在新标签页中打开结果页面
+  const papersJson = encodeURIComponent(JSON.stringify(papers));
+  chrome.tabs.create({
+    url: `result.html?papers=${papersJson}`
+  });
   
-  paperList.innerHTML = papers.map((paper, index) => `
-    <div class="paper-item">
-      <input type="checkbox" class="paper-checkbox" data-index="${index}">
-      <div class="paper-content">
-        <div>
-          <strong class="paper-title" data-index="${index}" style="cursor: pointer;">
-            ${escapeHtml(paper.title)}
-          </strong>
-        </div>
-        <div>作者: ${escapeHtml(paper.authors)}</div>
-        <div>期刊: ${escapeHtml(paper.journal)}</div>
-        <div>发表年份: ${escapeHtml(paper.publishDate)}</div>
-        <div>引用次数: ${escapeHtml(paper.citations)}</div>
-      </div>
-    </div>
-  `).join('');
-
-  // 添加全选/取消全选功能
-  const selectAllCheckbox = document.getElementById('selectAll');
-  const checkboxes = document.querySelectorAll('.paper-checkbox');
-  
-  selectAllCheckbox.addEventListener('change', (e) => {
-    checkboxes.forEach(checkbox => {
-      checkbox.checked = e.target.checked;
-    });
-  });
-
-  // 当单个复选框状态改变时,检查是否需要更新全选框状态
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-      selectAllCheckbox.checked = allChecked;
-    });
-  });
-
-  // 保持原有的模态框相关代码
-  const modal = document.getElementById('paperModal');
-  const paperDetail = document.getElementById('paperDetail');
-  const closeBtn = document.querySelector('.close');
-  
-  // 为所有论文标题添加点击事件
-  document.querySelectorAll('.paper-title').forEach(title => {
-    title.addEventListener('click', () => {
-      const index = parseInt(title.dataset.index);
-      const paper = papers[index];
-      
-      // 显示详细信息
-      paperDetail.innerHTML = `
-        <h3>${escapeHtml(paper.title)}</h3>
-        <p><strong>作者:</strong> ${escapeHtml(paper.authors)}</p>
-        <p><strong>期刊:</strong> ${escapeHtml(paper.journal)}</p>
-        <p><strong>发表年份:</strong> ${escapeHtml(paper.publishDate)}</p>
-        <p><strong>引用次数:</strong> ${escapeHtml(paper.citations)}</p>
-      `;
-      
-      modal.style.display = 'block';
-    });
-  });
-
-  // 关闭按钮事件
-  closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-
-  // 点击模态框外部关闭
-  window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
+  // 关闭弹出窗口
+  window.close();
 }
 
 // 下载CSV文件

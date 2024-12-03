@@ -33,5 +33,9 @@
       "js": ["content.js"],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "web_accessible_resources": [{
+    "resources": ["result.html", "result.js"],
+    "matches": ["<all_urls>"]
+  }]
 } 

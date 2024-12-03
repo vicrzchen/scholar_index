@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Google Scholar 文献列表</title>
+  <style>
+    body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .select-all-container {
+      margin-bottom: 20px;
+    }
+    #downloadBtn {
+      padding: 10px 20px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #downloadBtn:hover {
+      background: #3367d6;
+    }
+    #downloadBtn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    /* 表格样式 */
+    .paper-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .paper-table th,
+    .paper-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .paper-table th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    .paper-table tr:hover {
+      background-color: #f5f5f5;
+    }
+    .paper-checkbox {
+      margin: 0;
+      padding: 0;
+    }
+    .title-cell {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .authors-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .journal-cell {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Google Scholar 文献列表</h1>
+    <button id="downloadBtn">导出选中项为CSV</button>
+  </div>
+  <div class="select-all-container">
+    <label>
+      <input type="checkbox" id="selectAll">
+      全选/取消全选
+    </label>
+  </div>
+  <div id="paperList">
+    <table class="paper-table">
+      <thead>
+        <tr>
+          <th width="40"><input type="checkbox" id="tableSelectAll"></th>
+          <th>标题</th>
+          <th>作者</th>
+          <th>期刊</th>
+          <th width="100">发表年份</th>
+          <th width="100">引用次数</th>
+        </tr>
+      </thead>
+      <tbody id="paperTableBody"></tbody>
+    </table>
+  </div>
+  <script src="result.js"></script>
+</body>
+</html> 
