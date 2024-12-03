@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Google Scholar 文献导出</title>
+  <style>
+    body {
+      width: 400px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    #paperList {
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 10px 0;
+    }
+    .paper-item {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    button {
+      width: 100%;
+      padding: 8px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3367d6;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .error {
+      color: red;
+      padding: 10px;
+      background: #fff0f0;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    /* 添加弹窗样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      width: 80%;
+      border-radius: 5px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 5px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    /* 在现有样式中添加 */
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    #processingStatus {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <h2>Google Scholar 文献导出</h2>
+  <div id="paperList"></div>
+  <button id="downloadBtn">导出为CSV</button>
+  <!-- 添加模态框 -->
+  <div id="paperModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="paperDetail"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 

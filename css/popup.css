@@ -1,0 +1,13 @@
+body {
+  width: 300px;
+  padding: 10px;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 18px;
+  color: #333;
+} 
