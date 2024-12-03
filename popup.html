@@ -15,8 +15,21 @@
       margin: 10px 0;
     }
     .paper-item {
+      display: flex;
       padding: 8px;
       border-bottom: 1px solid #eee;
+    }
+    .paper-checkbox {
+      margin-right: 10px;
+      align-self: center;
+    }
+    .paper-content {
+      flex: 1;
+    }
+    .select-all-container {
+      padding: 8px;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 10px;
     }
     button {
       width: 100%;
@@ -87,8 +100,15 @@
 </head>
 <body>
   <h2>Google Scholar 文献导出</h2>
+  <!-- 添加全选功能 -->
+  <div class="select-all-container">
+    <label>
+      <input type="checkbox" id="selectAll">
+      全选/取消全选
+    </label>
+  </div>
   <div id="paperList"></div>
-  <button id="downloadBtn">导出为CSV</button>
+  <button id="downloadBtn">导出选中项为CSV</button>
   <!-- 添加模态框 -->
   <div id="paperModal" class="modal">
     <div class="modal-content">

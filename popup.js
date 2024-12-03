@@ -73,23 +73,44 @@ function displayPapers(papers) {
   
   paperList.innerHTML = papers.map((paper, index) => `
     <div class="paper-item">
-      <div>
-        <strong class="paper-title" data-index="${index}" style="cursor: pointer;">
-          ${escapeHtml(paper.title)}
-        </strong>
+      <input type="checkbox" class="paper-checkbox" data-index="${index}">
+      <div class="paper-content">
+        <div>
+          <strong class="paper-title" data-index="${index}" style="cursor: pointer;">
+            ${escapeHtml(paper.title)}
+          </strong>
+        </div>
+        <div>作者: ${escapeHtml(paper.authors)}</div>
+        <div>期刊: ${escapeHtml(paper.journal)}</div>
+        <div>发表年份: ${escapeHtml(paper.publishDate)}</div>
+        <div>引用次数: ${escapeHtml(paper.citations)}</div>
       </div>
-      <div>作者: ${escapeHtml(paper.authors)}</div>
-      <div>期刊: ${escapeHtml(paper.journal)}</div>
-      <div>发表年份: ${escapeHtml(paper.publishDate)}</div>
-      <div>引用次数: ${escapeHtml(paper.citations)}</div>
     </div>
   `).join('');
 
-  // 添加点击事件处理
+  // 添加全选/取消全选功能
+  const selectAllCheckbox = document.getElementById('selectAll');
+  const checkboxes = document.querySelectorAll('.paper-checkbox');
+  
+  selectAllCheckbox.addEventListener('change', (e) => {
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = e.target.checked;
+    });
+  });
+
+  // 当单个复选框状态改变时,检查是否需要更新全选框状态
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      selectAllCheckbox.checked = allChecked;
+    });
+  });
+
+  // 保持原有的模态框相关代码
   const modal = document.getElementById('paperModal');
   const paperDetail = document.getElementById('paperDetail');
   const closeBtn = document.querySelector('.close');
-
+  
   // 为所有论文标题添加点击事件
   document.querySelectorAll('.paper-title').forEach(title => {
     title.addEventListener('click', () => {
@@ -179,8 +200,20 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       throw new Error('没有可用的论文数据');
     }
     
-    // 直接使用缓存的数据下载
-    await downloadCSV(cachedPapers);
+    // 获取选中的论文
+    const checkboxes = document.querySelectorAll('.paper-checkbox:checked');
+    if (checkboxes.length === 0) {
+      throw new Error('请至少选择一篇论文');
+    }
+    
+    // 筛选出选中的论文数据
+    const selectedPapers = Array.from(checkboxes).map(checkbox => {
+      const index = parseInt(checkbox.dataset.index);
+      return cachedPapers[index];
+    });
+    
+    // 导出选中的论文
+    await downloadCSV(selectedPapers);
     
   } catch (error) {
     console.error('Error in download button click:', error);

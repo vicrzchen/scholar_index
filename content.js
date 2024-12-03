@@ -46,7 +46,6 @@ async function getPaperInfo() {
     
     console.log('Found articles:', totalArticles);
     
-    // 发送初始化消息
     chrome.runtime.sendMessage({
       action: 'processingStatus',
       message: `正在获取 ${totalArticles} 篇文献的信息...`
@@ -54,40 +53,35 @@ async function getPaperInfo() {
     
     for (let i = 0; i < articles.length; i++) {
       const article = articles[i];
-      // 获取标题和链接
       const titleElement = article.querySelector('.gsc_a_at');
       const title = titleElement ? titleElement.textContent.trim() : '';
       const detailUrl = titleElement ? titleElement.href : '';
       
-      // 发送进度消息
       chrome.runtime.sendMessage({
         action: 'processingStatus',
         message: `正在处理第 ${i + 1}/${totalArticles} 篇文献：${title}`
       });
       
-      // 获取作者信息
+      // 改用后台脚本获取作者信息
       let authors = '';
       if (detailUrl) {
-        // 从详情页获取完整作者列表
         try {
-          const response = await fetch(detailUrl);
-          const text = await response.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(text, 'text/html');
-          
-          // 在详情页中查找作者信息
-          const authorElement = doc.querySelector('.gsc_oci_value');
-          if (authorElement) {
-            authors = authorElement.textContent.trim();
-          }
+          const response = await new Promise((resolve) => {
+            chrome.runtime.sendMessage(
+              { 
+                action: 'getAuthorDetails', 
+                url: detailUrl 
+              },
+              (response) => resolve(response)
+            );
+          });
+          authors = response.authors;
         } catch (error) {
-          console.error('Error fetching author details:', error);
-          // 如果获取详情页失败，使用列表页的作者信息作为后备
+          console.error('Error getting author details:', error);
           const authorElement = article.querySelector('.gs_gray');
           authors = authorElement ? authorElement.textContent.trim() : '';
         }
       } else {
-        // 如果没有详情页链接，使用列表页的作者信息
         const authorElement = article.querySelector('.gs_gray');
         authors = authorElement ? authorElement.textContent.trim() : '';
       }
@@ -114,7 +108,6 @@ async function getPaperInfo() {
       });
     }
 
-    // 发送完成消息
     chrome.runtime.sendMessage({
       action: 'processingStatus',
       message: `已完成所有 ${totalArticles} 篇文献的信息获取`
