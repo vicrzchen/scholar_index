@@ -53,6 +53,22 @@ async function getPaperInfo() {
     
     for (let i = 0; i < articles.length; i++) {
       const article = articles[i];
+      
+      // 移除之前的高亮
+      document.querySelectorAll('.gsc_a_tr.processing').forEach(el => {
+        el.classList.remove('processing');
+      });
+      
+      // 添加高亮样式
+      article.classList.add('processing');
+      
+      // 滚动到当前元素
+      article.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center'
+      });
+      
+      // 获取标题和链接
       const titleElement = article.querySelector('.gsc_a_at');
       const title = titleElement ? titleElement.textContent.trim() : '';
       const detailUrl = titleElement ? titleElement.href : '';
@@ -62,7 +78,7 @@ async function getPaperInfo() {
         message: `正在处理第 ${i + 1}/${totalArticles} 篇文献：${title}`
       });
       
-      // 改用后台脚本获取作者信息
+      // 获取作者信息
       let authors = '';
       if (detailUrl) {
         try {
@@ -106,11 +122,14 @@ async function getPaperInfo() {
         publishDate: year,
         meta: `${authors} | ${journal} | 引用次数: ${citations}`
       });
+
+      // 短暂延迟以便看到高亮效果
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
 
-    chrome.runtime.sendMessage({
-      action: 'processingStatus',
-      message: `已完成所有 ${totalArticles} 篇文献的信息获取`
+    // 最后移除所有高亮
+    document.querySelectorAll('.gsc_a_tr.processing').forEach(el => {
+      el.classList.remove('processing');
     });
 
     console.log('Processed papers:', papers.length);
@@ -120,6 +139,19 @@ async function getPaperInfo() {
     throw error;
   }
 }
+
+// 添加高亮样式
+const style = document.createElement('style');
+style.textContent = `
+  .gsc_a_tr.processing {
+    background-color: #e3f2fd !important;
+    transition: background-color 0.3s ease;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+`;
+document.head.appendChild(style);
 
 // 确认内容脚本已加载
 console.log('Content script initialization complete'); 

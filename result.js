@@ -83,6 +83,10 @@ async function downloadCSV(papers) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+
+  // 等待一小段时间确保下载开始后再关闭页面
+  await new Promise(resolve => setTimeout(resolve, 500));
+  window.close();
 }
 
 // HTML转义
